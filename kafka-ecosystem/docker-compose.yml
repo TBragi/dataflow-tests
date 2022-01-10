@@ -1,0 +1,51 @@
+version: "3.8"
+services:
+  zookeeper:
+    image: wurstmeister/zookeeper
+  kafka:
+    image: wurstmeister/kafka:latest
+    depends_on:
+      - zookeeper 
+    environment:
+      HOSTNAME: "kafka"
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INSIDE:PLAINTEXT,OUTSIDE:PLAINTEXT,CLUSTER:PLAINTEXT
+      KAFKA_ADVERTISED_LISTENERS: INSIDE://:9092,OUTSIDE://kafka:9094,CLUSTER://kafka:1337
+      KAFKA_LISTENERS: INSIDE://:9092,OUTSIDE://:9094,CLUSTER://:1337
+      KAFKA_INTER_BROKER_LISTENER_NAME: INSIDE
+      KAFKA_AUTO_CREATE_TOPICS_ENABLE: 'true'
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.0.1
+    depends_on:
+      - kafka
+    ports:
+      - "8081:8081"
+    environment:
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka:1337'
+      SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
+#      SCHEMA_REGISTRY_DEBUG: 'true'
+  kafka-ui:
+    image: provectuslabs/kafka-ui
+    ports:
+      - "8080:8080"
+    depends_on:
+      - kafka
+    restart: always
+    environment:
+      KAFKA_CLUSTERS_0_NAME: local
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:9094
+      KAFKA_CLUSTERS_0_ZOOKEEPER: zookeeper:2181
+      KAFKA_CLUSTERS_0_SCHEMAREGISTRY: 'schema-registry:8081'
+  producer:
+    build: ./producer
+    depends_on:
+      - kafka
+      - zookeeper
+    restart: always
+  consumer:
+    build: ./consumer
+    depends_on:
+      - kafka
+      - zookeeper
+    restart: always
