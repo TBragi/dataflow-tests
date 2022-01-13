@@ -24,7 +24,6 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: 'kafka:1337'
       SCHEMA_REGISTRY_LISTENERS: http://0.0.0.0:8081
-#      SCHEMA_REGISTRY_DEBUG: 'true'
   kafka-ui:
     image: provectuslabs/kafka-ui
     ports:
@@ -49,3 +48,11 @@ services:
       - kafka
       - zookeeper
     restart: always
+
+  logstash:
+    image: logstash:7.16.2
+    depends_on:
+      - schema-registry
+      - kafka
+    volumes:
+      - ./logstash/:/usr/share/logstash/config/:ro

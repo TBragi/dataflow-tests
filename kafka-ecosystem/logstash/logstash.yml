@@ -1,0 +1,33 @@
+
+# Periodically check if the configuration has changed and reload the pipeline
+# This can also be triggered manually through the SIGHUP signal
+#
+config.reload.automatic: true
+http.host: "0.0.0.0"
+#xpack.monitoring.elasticsearch.hosts: [ "http://elasticsearch:9200" ]
+# ------------ Dead-Letter Queue Settings --------------
+# Flag to turn on dead-letter queue.
+#
+dead_letter_queue.enable: true
+xpack.monitoring.enabled: false
+#xpack.monitoring.elasticsearch.username: elastic
+#xpack.monitoring.elasticsearch.password: changeme
+# ------------- Log settings --------------
+# Options for log.level:
+#   * fatal
+#   * error
+#   * warn
+#   * info (default)
+#   * debug
+#   * trace
+#
+# log.level: info
+path.logs: "/usr/share/logstash/data"
+### --------- X-PACK ---------- ###
+# Where x-pack should send monitoring data for logstash
+#
+# The user used to connect to the elastic nodes and certificate, since x-pack security is enabled
+pipeline.java_execution: false
+node.name: test-pipeline
+path.data: "/usr/share/logstash/data"
+#path.config: "/config-dir/example-for-local-log-test.conf"

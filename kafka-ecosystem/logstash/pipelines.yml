@@ -1,0 +1,3 @@
+- pipeline.id: kafka-test
+  path.config: "./config/logstash.conf"
+  pipeline.workers: 1
